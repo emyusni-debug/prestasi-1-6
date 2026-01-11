@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Buku Prestasi Tahfidh</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --primary-dark: #E55A2B;
+            --primary-light: #FF8C5A;
+            --secondary: #FFA366;
+            --accent: #FFD4B8;
+            --bg-light: #FFF8F4;
+            --text-dark: #2D2D2D;
+            --text-light: #666;
+            --white: #FFFFFF;
+            --success: #4CAF50;
+            --warning: #FFC107;
+            --danger: #F44336;
+            --info: #2196F3;
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,var(--bg-light) 0%,var(--accent) 100%);min-height:100vh;color:var(--text-dark);transition:background 0.3s}
+        .login-container{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+        .login-header{text-align:center;margin-bottom:30px}
+        .logo{width:100px;height:100px;border-radius:50%;animation:pulse 2s infinite,glow 3s ease-in-out infinite;box-shadow:0 4px 15px rgba(255,107,53,0.4)}
+        @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+        @keyframes glow{0%,100%{box-shadow:0 4px 15px rgba(255,107,53,0.4)}50%{box-shadow:0 4px 30px rgba(255,107,53,0.8)}}
+        .login-header h1{color:var(--primary);font-size:1.8rem;margin-top:15px;transition:color 0.3s}
+        .login-header h2{color:var(--text-dark);font-size:1.1rem;margin-top:8px}
+        .login-header p{color:var(--text-light);font-size:0.9rem;margin-top:5px}
+        .login-box{background:var(--white);padding:30px;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,0.15);width:100%;max-width:380px}
+        .login-option{padding:15px;margin-bottom:15px;border:2px solid var(--accent);border-radius:12px;cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;gap:12px}
+        .login-option:hover{border-color:var(--primary);background:var(--bg-light)}
+        .login-option.active{border-color:var(--primary);background:var(--accent)}
+        .login-option i{font-size:1.5rem;color:var(--primary)}
+        .login-option span{font-weight:600}
+        .password-group{display:none;margin-top:15px;position:relative}
+        .password-group.show{display:block}
+        .password-group input{width:100%;padding:12px 45px 12px 15px;border:2px solid var(--accent);border-radius:10px;font-size:1rem;outline:none}
+        .password-group input:focus{border-color:var(--primary)}
+        .toggle-password{position:absolute;right:15px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--text-light)}
+        .kelas-select{display:none;margin-top:15px}
+        .kelas-select.show{display:block}
+        .kelas-select select{width:100%;padding:12px 15px;border:2px solid var(--accent);border-radius:10px;font-size:1rem;outline:none;background:var(--white)}
+        .kelas-select select:focus{border-color:var(--primary)}
+        .btn{width:100%;padding:14px;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.3s}
+        .btn-primary{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);color:var(--white);margin-top:20px}
+        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(0,0,0,0.2)}
+        .btn-primary:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+        .error-msg{color:var(--danger);font-size:0.85rem;margin-top:10px;display:none;text-align:center}
+        .dashboard{display:none;min-height:100vh;padding-bottom:80px}
+        .dashboard.active{display:block}
+        .header{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);color:var(--white);padding:15px 20px;text-align:center;position:sticky;top:0;z-index:100;transition:background 0.3s}
+        .header-content{display:flex;align-items:center;justify-content:center;gap:12px}
+        .header-logo{width:50px;height:50px;border-radius:50%;border:2px solid var(--white);animation:pulse 2s infinite}
+        .header-text h1{font-size:1.2rem}
+        .header-text p{font-size:0.75rem;opacity:0.9}
+        .kelas-badge{background:rgba(255,255,255,0.3);padding:3px 12px;border-radius:15px;font-size:0.9rem;font-weight:bold;margin-left:5px}
+        .user-info{background:rgba(255,255,255,0.2);padding:5px 15px;border-radius:20px;font-size:0.8rem;margin-top:10px;display:inline-flex;align-items:center;gap:8px}
+        .sync-status{display:inline-flex;align-items:center;gap:4px;font-size:0.7rem;padding:2px 8px;border-radius:10px;background:rgba(255,255,255,0.2)}
+        .sync-status.online{color:#90EE90}
+        .sync-status.offline{color:#FFB6C1}
+        .tabs{display:flex;background:var(--white);box-shadow:0 2px 10px rgba(0,0,0,0.1);position:sticky;top:90px;z-index:99;overflow-x:auto}
+        .tab{flex:1;padding:12px 8px;text-align:center;cursor:pointer;border-bottom:3px solid transparent;transition:all 0.3s;font-size:0.75rem;min-width:80px}
+        .tab i{display:block;font-size:1.2rem;margin-bottom:4px;color:var(--text-light)}
+        .tab.active{border-bottom-color:var(--primary);color:var(--primary)}
+        .tab.active i{color:var(--primary)}
+        .tab-content{display:none;padding:15px}
+        .tab-content.active{display:block}
+        .card{background:var(--white);border-radius:15px;padding:20px;margin-bottom:15px;box-shadow:0 3px 15px rgba(0,0,0,0.08)}
+        .card-title{font-size:1rem;color:var(--primary);margin-bottom:15px;display:flex;align-items:center;gap:8px}
+        .target-info{background:linear-gradient(135deg,var(--accent) 0%,var(--secondary) 100%);border-radius:12px;padding:15px;margin-bottom:20px;transition:background 0.3s}
+        .target-info h3{color:var(--primary-dark);font-size:0.9rem;margin-bottom:10px}
+        .semester-target{display:flex;gap:10px;flex-wrap:wrap}
+        .semester-item{flex:1;min-width:140px;background:var(--white);padding:10px;border-radius:8px;font-size:0.8rem}
+        .semester-item strong{color:var(--primary);display:block;margin-bottom:3px}
+        .form-row{display:flex;gap:10px;margin-bottom:12px}
+        .form-group{flex:1;margin-bottom:12px}
+        .form-group label{display:block;font-size:0.85rem;color:var(--text-light);margin-bottom:5px}
+        .form-group select,.form-group input{width:100%;padding:10px 12px;border:2px solid var(--accent);border-radius:8px;font-size:0.9rem;outline:none;background:var(--white)}
+        .form-group select:focus,.form-group input:focus{border-color:var(--primary)}
+        .predikat-options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+        .predikat-item{padding:12px;border:2px solid var(--accent);border-radius:10px;text-align:center;cursor:pointer;transition:all 0.3s;font-size:0.85rem}
+        .predikat-item i{font-size:1.5rem;display:block;margin-bottom:5px}
+        .predikat-item.istimewa{color:#FFD700}
+        .predikat-item.bagus{color:var(--success)}
+        .predikat-item.cukup{color:var(--info)}
+        .predikat-item.mengulang{color:var(--danger)}
+        .predikat-item.selected{transform:scale(1.02)}
+        .predikat-item.istimewa.selected{background:#FFF9E6;border-color:#FFD700}
+        .predikat-item.bagus.selected{background:#E8F5E9;border-color:var(--success)}
+        .predikat-item.cukup.selected{background:#E3F2FD;border-color:var(--info)}
+        .predikat-item.mengulang.selected{background:#FFEBEE;border-color:var(--danger)}
+        .recording-section{text-align:center;padding:20px}
+        .record-btn{width:80px;height:80px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--primary) 0%,var(--danger) 100%);color:var(--white);font-size:2rem;cursor:pointer;transition:all 0.3s;box-shadow:0 5px 20px rgba(0,0,0,0.2)}
+        .record-btn:hover{transform:scale(1.1)}
+        .record-btn.recording{animation:recordPulse 1s infinite;background:linear-gradient(135deg,var(--danger) 0%,#C62828 100%)}
+        @keyframes recordPulse{0%,100%{box-shadow:0 0 0 0 rgba(244,67,54,0.7)}50%{box-shadow:0 0 0 20px rgba(244,67,54,0)}}
+        .recording-status{margin-top:15px;font-size:0.9rem;color:var(--text-light)}
+        .recording-time{font-size:1.5rem;font-weight:bold;margin-top:10px;color:var(--primary)}
+        .recordings-list{margin-top:15px}
+        .recording-item{background:var(--bg-light);padding:15px;border-radius:12px;margin-bottom:10px;border-left:4px solid var(--primary)}
+        .recording-item-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:10px}
+        .recording-item h4{color:var(--primary);font-size:0.95rem}
+        .recording-item p{font-size:0.75rem;color:var(--text-light);margin-top:2px}
+        .recording-item audio{width:100%;margin-top:10px;height:40px}
+        .history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;flex-wrap:wrap;gap:10px}
+        .history-actions{display:flex;gap:10px}
+        .icon-btn{width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
+        .icon-btn.refresh{background:var(--info);color:var(--white)}
+        .icon-btn.refresh.spinning i{animation:spin 1s linear infinite}
+        .icon-btn.delete-all{background:var(--danger);color:var(--white)}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .history-item{background:var(--bg-light);border-radius:12px;padding:15px;margin-bottom:10px;border-left:4px solid var(--primary)}
+        .history-item-header{display:flex;justify-content:space-between;align-items:start;gap:10px}
+        .history-item h4{color:var(--primary);font-size:0.95rem}
+        .history-item p{font-size:0.85rem;color:var(--text-light);margin-top:3px}
+        .predikat-badge{padding:4px 10px;border-radius:15px;font-size:0.75rem;font-weight:600;white-space:nowrap}
+        .badge-istimewa{background:#FFF9E6;color:#B8860B}
+        .badge-bagus{background:#E8F5E9;color:var(--success)}
+        .badge-cukup{background:#E3F2FD;color:var(--info)}
+        .badge-mengulang{background:#FFEBEE;color:var(--danger)}
+        .delete-item-btn{background:none;border:none;color:var(--danger);cursor:pointer;padding:5px;font-size:1rem}
+        .history-actions-item{display:flex;align-items:center;gap:8px}
+        .stat-card{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);color:var(--white);border-radius:15px;padding:20px;margin-bottom:15px;text-align:center;transition:background 0.3s}
+        .stat-card h3{font-size:2.5rem;margin-bottom:5px}
+        .stat-card p{opacity:0.9;font-size:0.9rem}
+        .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
+        .stat-item{background:var(--white);border-radius:12px;padding:15px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,0.08)}
+        .stat-item i{font-size:1.5rem;margin-bottom:8px}
+        .stat-item h4{font-size:1.5rem;color:var(--text-dark)}
+        .stat-item p{font-size:0.75rem;color:var(--text-light)}
+        .progress-section{margin-top:15px}
+        .progress-item{margin-bottom:12px}
+        .progress-label{display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:5px}
+        .progress-bar{height:8px;background:var(--accent);border-radius:4px;overflow:hidden}
+        .progress-fill{height:100%;border-radius:4px;transition:width 0.5s ease}
+        .footer{position:fixed;bottom:0;left:0;right:0;background:var(--white);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 -3px 15px rgba(0,0,0,0.1);z-index:100}
+        .footer-btn{display:flex;align-items:center;gap:8px;padding:10px 20px;border-radius:25px;border:none;cursor:pointer;font-size:0.85rem;font-weight:600;text-decoration:none;transition:all 0.3s}
+        .wa-btn{background:#25D366;color:var(--white)}
+        .logout-btn{background:var(--bg-light);color:var(--danger)}
+        .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--text-dark);color:var(--white);padding:12px 25px;border-radius:25px;font-size:0.9rem;opacity:0;transition:all 0.3s;z-index:1000;max-width:90%;text-align:center}
+        .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+        .toast.success{background:var(--success)}
+        .toast.error{background:var(--danger)}
+        .loading{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center;flex-direction:column;gap:15px}
+        .loading.show{display:flex}
+        .spinner{width:50px;height:50px;border:4px solid var(--accent);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+        .loading-text{color:var(--white);font-size:0.9rem}
+        .info-card{background:linear-gradient(135deg,var(--accent) 0%,var(--bg-light) 100%);border-radius:12px;padding:15px;margin-bottom:15px}
+        .info-card h4{color:var(--primary-dark);font-size:0.85rem;margin-bottom:8px}
+        .info-card p{font-size:0.85rem;color:var(--text-dark);margin-bottom:3px}
+        .empty-state{text-align:center;padding:40px 20px;color:var(--text-light)}
+        .empty-state i{font-size:3rem;margin-bottom:15px;opacity:0.5}
+        .student-view .teacher-only{display:none!important}
+        .last-update{font-size:0.75rem;color:var(--text-light);text-align:center;margin-top:15px;padding:10px;background:var(--bg-light);border-radius:8px}
+        .upload-progress{margin-top:15px;padding:10px;background:var(--bg-light);border-radius:8px;text-align:center;display:none}
+        .upload-progress.show{display:block}
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div class="login-container" id="loginPage">
+        <div class="login-header">
+            <img src="https://iili.io/fXljUa1.png" alt="Logo" class="logo">
+            <h1>Buku Prestasi Tahfidh</h1>
+            <h2>MIS HIDAYATUL MUBTADIIN</h2>
+            <p><i class="fas fa-map-marker-alt"></i> Undaan Kidul Kudus</p>
+        </div>
+        
+        <div class="login-box">
+            <div class="login-option" id="guruOption" onclick="selectLoginOption('guru')">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <div><span>Guru Tahfidh</span><small style="display:block;color:var(--text-light);font-size:0.75rem;">Masukkan password kelas</small></div>
+            </div>
+            
+            <div class="login-option" id="muridOption" onclick="selectLoginOption('murid')">
+                <i class="fas fa-user-graduate"></i>
+                <div><span>Murid</span><small style="display:block;color:var(--text-light);font-size:0.75rem;">Pilih kelas untuk melihat</small></div>
+            </div>
+            
+            <div class="password-group" id="passwordGroup">
+                <input type="password" id="password" placeholder="Masukkan password kelas">
+                <i class="fas fa-eye toggle-password" onclick="togglePassword()"></i>
+            </div>
+            
+            <div class="kelas-select" id="kelasSelect">
+                <select id="selectKelas">
+                    <option value="">-- Pilih Kelas --</option>
+                    <option value="4A">Kelas 4A</option>
+                    <option value="4B">Kelas 4B</option>
+                    <option value="5A">Kelas 5A</option>
+                    <option value="5B">Kelas 5B</option>
+                    <option value="6A">Kelas 6A</option>
+                    <option value="6B">Kelas 6B</option>
+                </select>
+            </div>
+            
+            <p class="error-msg" id="errorMsg">Password salah atau tidak valid!</p>
+            
+            <button class="btn btn-primary" onclick="login()"><i class="fas fa-sign-in-alt"></i> Masuk</button>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <div class="header">
+            <div class="header-content">
+                <img src="https://iili.io/fXljUa1.png" alt="Logo" class="header-logo">
+                <div class="header-text">
+                    <h1>Buku Prestasi Tahfidh <span class="kelas-badge" id="kelasBadge">4A</span></h1>
+                    <p>MIS HIDAYATUL MUBTADIIN - Undaan Kidul Kudus</p>
+                </div>
+            </div>
+            <div class="user-info">
+                <i class="fas fa-user"></i> <span id="userDisplay"></span>
+                <span class="sync-status online" id="syncStatus"><i class="fas fa-circle" style="font-size:0.5rem;"></i> Online</span>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('setoran')"><i class="fas fa-book-quran"></i>Setor</div>
+            <div class="tab" onclick="switchTab('bimbingan')"><i class="fas fa-microphone"></i>Rekaman</div>
+            <div class="tab" onclick="switchTab('riwayat')"><i class="fas fa-history"></i>Riwayat</div>
+            <div class="tab" onclick="switchTab('statistik')"><i class="fas fa-chart-bar"></i>Statistik</div>
+        </div>
+
+        <div class="tab-content active" id="setoranTab">
+            <div class="target-info">
+                <h3><i class="fas fa-bullseye"></i> Target Hafalan <span id="targetKelas">Kelas 4</span></h3>
+                <div class="semester-target">
+                    <div class="semester-item"><strong>Semester 1</strong><span id="targetSmt1">-</span></div>
+                    <div class="semester-item"><strong>Semester 2</strong><span id="targetSmt2">-</span></div>
+                </div>
+            </div>
+            <div class="card teacher-only">
+                <div class="card-title"><i class="fas fa-edit"></i> Form Setoran</div>
+                <div class="form-row">
+                    <div class="form-group"><label>Pilih Siswa</label><select id="selectSiswa"><option value="">-- Pilih --</option></select></div>
+                    <div class="form-group"><label>Pilih Surat</label><select id="selectSurat" onchange="updateAyatRange()"><option value="">-- Pilih --</option></select></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Dari Ayat</label><input type="number" id="ayatDari" min="1" placeholder="1"></div>
+                    <div class="form-group"><label>Sampai Ayat</label><input type="number" id="ayatSampai" min="1" placeholder="10"></div>
+                </div>
+                <div class="form-group">
+                    <label>Predikat</label>
+                    <div class="predikat-options">
+                        <div class="predikat-item istimewa" onclick="selectPredikat(this,'Istimewa')"><i class="fas fa-star"></i>Istimewa</div>
+                        <div class="predikat-item bagus" onclick="selectPredikat(this,'Bagus')"><i class="fas fa-thumbs-up"></i>Bagus</div>
+                        <div class="predikat-item cukup" onclick="selectPredikat(this,'Cukup')"><i class="fas fa-check"></i>Cukup</div>
+                        <div class="predikat-item mengulang" onclick="selectPredikat(this,'Mengulang')"><i class="fas fa-redo"></i>Mengulang</div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="btnKirim" onclick="kirimSetoran()"><i class="fas fa-paper-plane"></i> Kirim Setoran</button>
+            </div>
+            <div class="info-card"><h4><i class="fas fa-info-circle"></i> Informasi</h4><p><strong>Kepala Madrasah:</strong> M. Arifin, S.Pd.I, M.Pd</p><p><strong>Guru Tahfidh:</strong> M. Yusni</p></div>
+        </div>
+
+        <div class="tab-content" id="bimbinganTab">
+            <div class="card teacher-only">
+                <div class="card-title"><i class="fas fa-microphone-alt"></i> Rekam Bimbingan</div>
+                <div class="form-group"><label>Judul Rekaman</label><input type="text" id="recordingTitle" placeholder="Contoh: Muroja'ah Surat Al-Fajr"></div>
+                <div class="recording-section">
+                    <button class="record-btn" id="recordBtn" onclick="toggleRecording()"><i class="fas fa-microphone"></i></button>
+                    <p class="recording-status" id="recordingStatus">Tekan untuk mulai merekam</p>
+                    <p class="recording-time" id="recordingTime"></p>
+                </div>
+                <div class="upload-progress" id="uploadProgress"><i class="fas fa-cloud-upload-alt"></i> Mengupload rekaman...</div>
+            </div>
+            <div class="card">
+                <div class="history-header">
+                    <div class="card-title" style="margin-bottom:0;"><i class="fas fa-list"></i> Daftar Rekaman</div>
+                    <button class="icon-btn refresh" id="btnRefreshRekaman" onclick="loadRekaman()"><i class="fas fa-sync-alt"></i></button>
+                </div>
+                <div class="recordings-list" id="recordingsList"><div class="empty-state"><i class="fas fa-microphone-slash"></i><p>Memuat...</p></div></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="riwayatTab">
+            <div class="card">
+                <div class="history-header">
+                    <div class="card-title" style="margin-bottom:0;"><i class="fas fa-history"></i> Riwayat Setoran</div>
+                    <div class="history-actions">
+                        <button class="icon-btn refresh" id="btnRefresh" onclick="loadRiwayat()"><i class="fas fa-sync-alt"></i></button>
+                        <button class="icon-btn delete-all teacher-only" onclick="hapusSemuaData()"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                </div>
+                <div id="riwayatList"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Memuat...</p></div></div>
+                <div class="last-update" id="lastUpdate"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="statistikTab">
+            <div class="stat-card"><h3 id="totalSetoran">0</h3><p>Total Setoran</p></div>
+            <div class="stat-grid">
+                <div class="stat-item"><i class="fas fa-star" style="color:#FFD700;"></i><h4 id="statIstimewa">0</h4><p>Istimewa</p></div>
+                <div class="stat-item"><i class="fas fa-thumbs-up" style="color:var(--success);"></i><h4 id="statBagus">0</h4><p>Bagus</p></div>
+                <div class="stat-item"><i class="fas fa-check" style="color:var(--info);"></i><h4 id="statCukup">0</h4><p>Cukup</p></div>
+                <div class="stat-item"><i class="fas fa-redo" style="color:var(--danger);"></i><h4 id="statMengulang">0</h4><p>Mengulang</p></div>
+            </div>
+            <div class="card progress-section"><div class="card-title"><i class="fas fa-chart-line"></i> Progress Per Siswa</div><div id="progressList"></div></div>
+        </div>
+
+        <div class="footer">
+            <a href="https://wa.me/6285176776403" target="_blank" class="footer-btn wa-btn"><i class="fab fa-whatsapp"></i> Hubungi</a>
+            <button class="footer-btn logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <div class="loading" id="loading"><div class="spinner"></div><div class="loading-text" id="loadingText">Memuat...</div></div>
+
+    <script>
+        // ============================================
+        // KONFIGURASI SEMUA KELAS
+        // ============================================
+        const KELAS_CONFIG = {
+            '4A': {
+                password: 'tahfidh4a',
+                url: 'https://script.google.com/macros/s/AKfycbyGEGMaTdI_zlaGRuOG6jmRkE0XuaQrSqgO7cB1d5LmtxtVdy3wdjd80gSNGNpRTEM/exec',
+                colors: {
+                    primary: '#FF6B35', primaryDark: '#E55A2B', primaryLight: '#FF8C5A',
+                    secondary: '#FFA366', accent: '#FFD4B8', bgLight: '#FFF8F4'
+                },
+                target: { kelas: 'Kelas 4', smt1: 'Al-Lail (92) - Al-Fajr (89)', smt2: 'Al-Ghasyiyah (88) - At-Thariq (86)' },
+                siswa: [
+                    "Abiyyu Abdu Mubarak", "Aditya Mahesa Putra Ibrahim", "Afan Setiawan", "Aisyah Agustina Yasmin",
+                    "Alif Anargya Nugroho", "Ashinta Nafisatuz Zahra", "Azkiya Lailatul Fajriyah", "Azzahra Asyila Rahma",
+                    "Bassama Ayla Husni", "Diyan Khofifatus Sa'diyah", "Fathian Rafasya Fadhil", "Ghiyats",
+                    "Hamza Ibn Hassan", "La'la' Zahiruzzulfa", "Moh Chalibul Fawaid", "Muhammad Fatih Alkarim",
+                    "Muhammad Virza Irawan", "Muhammad Wildan Asyarif", "Muhammad Zikry Akromal", "Muhammad Zin Aqli Ilmi",
+                    "Raditya Naufal Darry Abiyyu", "Rahma Nadzifa Ramadani", "Raihana Yasmin Faiha",
+                    "Rijal Fadlurrohman Aldzaki", "Sumayya Sirril Chubba", "Zidan Nafi' Ilmi"
+                ],
+                surat: [
+                    { nomor: 86, nama: "At-Thariq", ayat: 17 }, { nomor: 87, nama: "Al-A'la", ayat: 19 },
+                    { nomor: 88, nama: "Al-Ghasyiyah", ayat: 26 }, { nomor: 89, nama: "Al-Fajr", ayat: 30 },
+                    { nomor: 90, nama: "Al-Balad", ayat: 20 }, { nomor: 91, nama: "Asy-Syams", ayat: 15 },
+                    { nomor: 92, nama: "Al-Lail", ayat: 21 }
+                ]
+            },
+            '4B': {
+                password: 'tahfidh4b',
+                url: 'https://script.google.com/macros/s/AKfycbyctZirwK7AoR3nx2oSdaLBNDexs6z7OICsz1gLlRqKBgLfbzkzbOzWBND83SSgGbWx/exec',
+                colors: {
+                    primary: '#2563EB', primaryDark: '#1D4ED8', primaryLight: '#3B82F6',
+                    secondary: '#60A5FA', accent: '#BFDBFE', bgLight: '#F0F7FF'
+                },
+                target: { kelas: 'Kelas 4', smt1: 'Al-Lail (92) - Al-Fajr (89)', smt2: 'Al-Ghasyiyah (88) - At-Thariq (86)' },
+                siswa: [
+                    "Adzkia Samha Saufa", "Ahmad Labib Salman", "Ahmad Umar Al Faruq", "Amalia Husna Nadia",
+                    "Arfan Abdul Hafizh", "Arifin Farhan Raif", "Binta Khumairo", "Fauziyatur Rohmaniyah",
+                    "Firsta Ayudia Inara Afiqa", "Hasna Bint Hassan", "Indra Prasetiawan", "Kalysta Aprilia Anjani",
+                    "King Vicho", "Moh Azza Rowi Ramadani", "Moh Hirzul Fahmil Akbar", "Mohammad Denis Dzul Fahmi",
+                    "Muh Saif Aiham", "Muhammad Aflah Fandi Giofani", "Muhammad Arga Aryaguna", "Muhammad Bagus Sya'roni",
+                    "Muhammad Mirza Chakim", "Niha Ainun Mahya", "Nuzulul Laili", "Raisya Elfreda",
+                    "Rayya Nashaima Afsheena", "Salisa Thalita Aulia"
+                ],
+                surat: [
+                    { nomor: 86, nama: "At-Thariq", ayat: 17 }, { nomor: 87, nama: "Al-A'la", ayat: 19 },
+                    { nomor: 88, nama: "Al-Ghasyiyah", ayat: 26 }, { nomor: 89, nama: "Al-Fajr", ayat: 30 },
+                    { nomor: 90, nama: "Al-Balad", ayat: 20 }, { nomor: 91, nama: "Asy-Syams", ayat: 15 },
+                    { nomor: 92, nama: "Al-Lail", ayat: 21 }
+                ]
+            },
+            '5A': {
+                password: 'tahfidh5a',
+                url: 'https://script.google.com/macros/s/AKfycbyrUBFErpZj4g97Fm4_LQe_4BK6N7X2Y1gaHBtciN8PsRfvHFQPkho1CTO678_T0Q/exec',
+                colors: {
+                    primary: '#16A34A', primaryDark: '#15803D', primaryLight: '#22C55E',
+                    secondary: '#4ADE80', accent: '#BBF7D0', bgLight: '#F0FDF4'
+                },
+                target: { kelas: 'Kelas 5', smt1: 'At-Thariq (86) - Al-Infithar (82)', smt2: 'At-Takwir (81) - An-Naba\' (78)' },
+                siswa: [
+                    "Ahmad Fahmi Maulana Hijaz", "Alfarid Zidan Nazruddin", "Arina Fifin Nafiati", "Azimatun Nikmah",
+                    "Dani Irsyad Ramadhani", "Delisa Maharani", "Difa Aulia Izzatunnisa", "Hilva Mazaya Mauha",
+                    "Intan Wulan Apriliani", "Keysha Sakura Anastasya", "Muh Syafiq Ibrahim", "Muhammad Anas Maula Shiddiq",
+                    "Muhammad Ardila Rizki", "Muhammad Bagas Setiawan", "Muhammad Bintang Pratama", "Muhammad Faza Maulana",
+                    "Muhammad Ilal Bahtiar", "Muhammad Khoirul Mahfudz", "Muhammad Naufal Faris Abyan", "Nur Aida Arifah Tara",
+                    "Thaniea Himawati", "Ummi Athiyyah", "Ziggy Zayyan Arkana", "Abdul Basith"
+                ],
+                surat: [
+                    { nomor: 78, nama: "An-Naba'", ayat: 40 }, { nomor: 79, nama: "An-Nazi'at", ayat: 46 },
+                    { nomor: 80, nama: "'Abasa", ayat: 42 }, { nomor: 81, nama: "At-Takwir", ayat: 29 },
+                    { nomor: 82, nama: "Al-Infithar", ayat: 19 }, { nomor: 83, nama: "Al-Muthaffifin", ayat: 36 },
+                    { nomor: 84, nama: "Al-Insyiqaq", ayat: 25 }, { nomor: 85, nama: "Al-Buruj", ayat: 22 },
+                    { nomor: 86, nama: "At-Thariq", ayat: 17 }
+                ]
+            },
+            '5B': {
+                password: 'tahfidh5b',
+                url: 'https://script.google.com/macros/s/AKfycbwU0PIWWONkTrMm4xpWDyrM9jjiwBzehtwAYsSNbyCj7JmYhuRDwv3QJ7PmJmB98Zft/exec',
+                colors: {
+                    primary: '#9333EA', primaryDark: '#7E22CE', primaryLight: '#A855F7',
+                    secondary: '#C084FC', accent: '#E9D5FF', bgLight: '#FAF5FF'
+                },
+                target: { kelas: 'Kelas 5', smt1: 'At-Thariq (86) - Al-Infithar (82)', smt2: 'At-Takwir (81) - An-Naba\' (78)' },
+                siswa: [
+                    "Abdullah Asyfaq Nawawi", "Abid Aqilla Rajendra", "Afreza Dwi Saputra", "Anindita Keisha Azzahra",
+                    "Friska Dila Aulia", "Jemmy Rachad Nazzih", "Kinara Syaqila Anggraini", "Mirza Muhammad Afiq El Fath",
+                    "Moh Fauzus Salam", "Muhammad Azka Alvaro", "Muhammad Erlangga", "Muhammad Zidna Ilman",
+                    "Muhammad Zulfan Alfatir", "Nahwa Kamilatun Nisa", "Nilam Ainur Rohmah", "Nindia Ramadhani Safitri",
+                    "Nurin Najwa", "Rafa Aditya Putra", "Talita Indah Ayu Septiana", "Wildan Faza Aufar", "Zalfa Rahmuna Yasmin"
+                ],
+                surat: [
+                    { nomor: 78, nama: "An-Naba'", ayat: 40 }, { nomor: 79, nama: "An-Nazi'at", ayat: 46 },
+                    { nomor: 80, nama: "'Abasa", ayat: 42 }, { nomor: 81, nama: "At-Takwir", ayat: 29 },
+                    { nomor: 82, nama: "Al-Infithar", ayat: 19 }, { nomor: 83, nama: "Al-Muthaffifin", ayat: 36 },
+                    { nomor: 84, nama: "Al-Insyiqaq", ayat: 25 }, { nomor: 85, nama: "Al-Buruj", ayat: 22 },
+                    { nomor: 86, nama: "At-Thariq", ayat: 17 }
+                ]
+            },
+            '6A': {
+                password: 'tahfidh6a',
+                url: 'https://script.google.com/macros/s/AKfycbzyfWP4qv0VC6ey0XARgPG80tY7rxqIqhQK8CMyL6ZFkQk8p3NtTOd04kGYVFqw0hg/exec',
+                colors: {
+                    primary: '#DC2626', primaryDark: '#B91C1C', primaryLight: '#EF4444',
+                    secondary: '#F87171', accent: '#FECACA', bgLight: '#FEF2F2'
+                },
+                target: { kelas: 'Kelas 6', smt1: 'Surah Yasin (36)', smt2: 'Al-Waqi\'ah (56) & Al-Mulk (67)' },
+                siswa: [
+                    "Abdullah Fatir Ibrahim", "Arfaa Aizzatul Ramadhani", "Ayunda Qurrota A'yun", "Azkiya Azzahwa",
+                    "Daffa Ibnu Hafidz", "Fatihatul Husniya", "Hania Syakira Assyafii", "Ihda Alya Lathifa",
+                    "Kanaya Afka Uliyani", "Lathif Akmal 'Azzam", "Moh Adam Al Assegaf", "Moh Zaiyani Syarif",
+                    "Muh Althof Adabi", "Muhammad Habibur Rohman", "Muhammad Khoirul Mannan", "Raihan Izzuddin",
+                    "Salwa Khuzama", "Savira Putri Mahira", "Septian Norsa Amarta", "Zaida Ilmania Ramadhani"
+                ],
+                surat: [
+                    { nomor: 36, nama: "Yasin", ayat: 83 },
+                    { nomor: 56, nama: "Al-Waqi'ah", ayat: 96 },
+                    { nomor: 67, nama: "Al-Mulk", ayat: 30 }
+                ]
+            },
+            '6B': {
+                password: 'tahfidh6b',
+                url: 'https://script.google.com/macros/s/AKfycbwGutmf6aCQbnKtSibf9Z7eZwdvwQnwIS95pfC-2C7PB7P69D1y7fefBGo8NEjq1bI/exec',
+                colors: {
+                    primary: '#0D9488', primaryDark: '#0F766E', primaryLight: '#14B8A6',
+                    secondary: '#2DD4BF', accent: '#99F6E4', bgLight: '#F0FDFA'
+                },
+                target: { kelas: 'Kelas 6', smt1: 'Surah Yasin (36)', smt2: 'Al-Waqi\'ah (56) & Al-Mulk (67)' },
+                siswa: [
+                    "Afwan Maulana Azidan", "Ahmad Ilzam Hannan", "Ahmad Najwa Zacky", "Alisia Azzahro",
+                    "Atika Balqis Khalisa", "Azka Syauqi Assyarif", "Friska Aulia Mufida", "Kaisa Bela Annisa",
+                    "Latifa Anfa Fauzya", "Moh Eka Muslikhin Harfifudin", "Moh Jauharul Fanani", "Muhammad Haikal Kamal Syukron",
+                    "Muhammad Iqbal Maulana", "Muhammad Surya Aqila Prasetyo", "Nabila Safiqoh", "Naila Amiratun Nabila",
+                    "Najwa Khaira Wilda", "Naysa Rahmania Putri", "Shifa Aulia Alissa"
+                ],
+                surat: [
+                    { nomor: 36, nama: "Yasin", ayat: 83 },
+                    { nomor: 56, nama: "Al-Waqi'ah", ayat: 96 },
+                    { nomor: 67, nama: "Al-Mulk", ayat: 30 }
+                ]
+            }
+        };
+
+        // ============================================
+        // STATE
+        // ============================================
+        let currentUser = null;
+        let currentKelas = null;
+        let currentConfig = null;
+        let selectedPredikat = null;
+        let isRecording = false;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let recordingTimer = null;
+        let recordingSeconds = 0;
+        let riwayatData = [];
+        let rekamanData = [];
+
+        // ============================================
+        // INIT
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            updateSyncStatus(navigator.onLine);
+            const saved = localStorage.getItem('prestasi_session');
+            if (saved) {
+                const session = JSON.parse(saved);
+                currentUser = session.user;
+                currentKelas = session.kelas;
+                currentConfig = KELAS_CONFIG[currentKelas];
+                showDashboard();
+            }
+        });
+        window.addEventListener('online', () => updateSyncStatus(true));
+        window.addEventListener('offline', () => updateSyncStatus(false));
+
+        function updateSyncStatus(o) {
+            const e = document.getElementById('syncStatus');
+            e.className = 'sync-status ' + (o ? 'online' : 'offline');
+            e.innerHTML = `<i class="fas fa-circle" style="font-size:0.5rem;"></i> ${o ? 'Online' : 'Offline'}`;
+        }
+
+        // ============================================
+        // LOGIN
+        // ============================================
+        function selectLoginOption(t) {
+            document.querySelectorAll('.login-option').forEach(o => o.classList.remove('active'));
+            document.getElementById(t + 'Option').classList.add('active');
+            document.getElementById('passwordGroup').classList.toggle('show', t === 'guru');
+            document.getElementById('kelasSelect').classList.toggle('show', t === 'murid');
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+
+        function togglePassword() {
+            const i = document.getElementById('password'), c = document.querySelector('.toggle-password');
+            const p = i.type === 'password';
+            i.type = p ? 'text' : 'password';
+            c.classList.toggle('fa-eye', !p);
+            c.classList.toggle('fa-eye-slash', p);
+        }
+
+        function login() {
+            const isGuru = document.getElementById('guruOption').classList.contains('active');
+            const isMurid = document.getElementById('muridOption').classList.contains('active');
+
+            if (!isGuru && !isMurid) {
+                showToast('Pilih jenis pengguna', 'error');
+                return;
+            }
+
+            if (isGuru) {
+                const pwd = document.getElementById('password').value.trim();
+                if (!pwd) {
+                    document.getElementById('errorMsg').textContent = 'Masukkan password!';
+                    document.getElementById('errorMsg').style.display = 'block';
+                    return;
+                }
+
+                // Cari kelas berdasarkan password
+                let foundKelas = null;
+                for (const [kelas, config] of Object.entries(KELAS_CONFIG)) {
+                    if (config.password === pwd) {
+                        foundKelas = kelas;
+                        break;
+                    }
+                }
+
+                if (!foundKelas) {
+                    document.getElementById('errorMsg').textContent = 'Password salah!';
+                    document.getElementById('errorMsg').style.display = 'block';
+                    return;
+                }
+
+                currentKelas = foundKelas;
+                currentUser = 'Guru Tahfidh';
+            } else {
+                const kelas = document.getElementById('selectKelas').value;
+                if (!kelas) {
+                    document.getElementById('errorMsg').textContent = 'Pilih kelas!';
+                    document.getElementById('errorMsg').style.display = 'block';
+                    return;
+                }
+                currentKelas = kelas;
+                currentUser = 'Murid';
+            }
+
+            currentConfig = KELAS_CONFIG[currentKelas];
+            localStorage.setItem('prestasi_session', JSON.stringify({ user: currentUser, kelas: currentKelas }));
+            showDashboard();
+        }
+
+        function showDashboard() {
+            // Apply colors
+            applyColors(currentConfig.colors);
+
+            // Update UI
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
+            document.getElementById('userDisplay').textContent = currentUser + ' - Kelas ' + currentKelas;
+            document.getElementById('kelasBadge').textContent = currentKelas;
+            document.getElementById('targetKelas').textContent = currentConfig.target.kelas;
+            document.getElementById('targetSmt1').textContent = currentConfig.target.smt1;
+            document.getElementById('targetSmt2').textContent = currentConfig.target.smt2;
+            document.getElementById('dashboard').classList.toggle('student-view', currentUser === 'Murid');
+
+            // Populate dropdowns
+            populateSiswa();
+            populateSurat();
+
+            // Load data
+            loadRiwayat();
+            loadRekaman();
+        }
+
+        function applyColors(c) {
+            const root = document.documentElement;
+            root.style.setProperty('--primary', c.primary);
+            root.style.setProperty('--primary-dark', c.primaryDark);
+            root.style.setProperty('--primary-light', c.primaryLight);
+            root.style.setProperty('--secondary', c.secondary);
+            root.style.setProperty('--accent', c.accent);
+            root.style.setProperty('--bg-light', c.bgLight);
+        }
+
+        function logout() {
+            localStorage.removeItem('prestasi_session');
+            currentUser = null;
+            currentKelas = null;
+            currentConfig = null;
+            document.getElementById('dashboard').classList.remove('active');
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('password').value = '';
+            document.getElementById('selectKelas').value = '';
+            document.querySelectorAll('.login-option').forEach(o => o.classList.remove('active'));
+            document.getElementById('passwordGroup').classList.remove('show');
+            document.getElementById('kelasSelect').classList.remove('show');
+            // Reset to default colors
+            applyColors(KELAS_CONFIG['4A'].colors);
+        }
+
+        function populateSiswa() {
+            const s = document.getElementById('selectSiswa');
+            s.innerHTML = '<option value="">-- Pilih --</option>';
+            currentConfig.siswa.forEach((n, i) => {
+                const o = document.createElement('option');
+                o.value = n;
+                o.textContent = `${i + 1}. ${n}`;
+                s.appendChild(o);
+            });
+        }
+
+        function populateSurat() {
+            const s = document.getElementById('selectSurat');
+            s.innerHTML = '<option value="">-- Pilih --</option>';
+            currentConfig.surat.forEach(x => {
+                const o = document.createElement('option');
+                o.value = JSON.stringify(x);
+                o.textContent = `${x.nomor}. ${x.nama} (${x.ayat} ayat)`;
+                s.appendChild(o);
+            });
+        }
+
+        // ============================================
+        // TABS
+        // ============================================
+        function switchTab(t) {
+            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+            event.target.closest('.tab').classList.add('active');
+            document.getElementById(t + 'Tab').classList.add('active');
+            if (t === 'riwayat') loadRiwayat();
+            if (t === 'statistik') updateStatistik();
+            if (t === 'bimbingan') loadRekaman();
+        }
+
+        // ============================================
+        // SETORAN
+        // ============================================
+        function updateAyatRange() {
+            const v = document.getElementById('selectSurat').value;
+            if (v) {
+                const s = JSON.parse(v);
+                document.getElementById('ayatDari').max = s.ayat;
+                document.getElementById('ayatSampai').max = s.ayat;
+            }
+        }
+
+        function selectPredikat(e, p) {
+            document.querySelectorAll('.predikat-item').forEach(x => x.classList.remove('selected'));
+            e.classList.add('selected');
+            selectedPredikat = p;
+        }
+
+        async function kirimSetoran() {
+            const siswa = document.getElementById('selectSiswa').value;
+            const suratData = document.getElementById('selectSurat').value;
+            const ayatDari = document.getElementById('ayatDari').value;
+            const ayatSampai = document.getElementById('ayatSampai').value;
+
+            if (!siswa || !suratData || !ayatDari || !ayatSampai || !selectedPredikat) {
+                showToast('Lengkapi semua data', 'error');
+                return;
+            }
+
+            const surat = JSON.parse(suratData);
+            if (parseInt(ayatDari) > parseInt(ayatSampai)) {
+                showToast('Ayat awal harus lebih kecil', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('btnKirim');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+
+            try {
+                await callAppsScript({
+                    action: 'tambah',
+                    tanggal: new Date().toLocaleDateString('id-ID'),
+                    waktu: new Date().toLocaleTimeString('id-ID'),
+                    siswa, surat: surat.nama, nomorSurat: surat.nomor,
+                    ayatDari, ayatSampai,
+                    jumlahAyat: parseInt(ayatSampai) - parseInt(ayatDari) + 1,
+                    predikat: selectedPredikat
+                });
+                showToast('Setoran berhasil!', 'success');
+                resetForm();
+                setTimeout(loadRiwayat, 500);
+            } catch (err) {
+                showToast('Gagal: ' + err.message, 'error');
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Setoran';
+        }
+
+        function resetForm() {
+            document.getElementById('selectSiswa').value = '';
+            document.getElementById('selectSurat').value = '';
+            document.getElementById('ayatDari').value = '';
+            document.getElementById('ayatSampai').value = '';
+            document.querySelectorAll('.predikat-item').forEach(x => x.classList.remove('selected'));
+            selectedPredikat = null;
+        }
+
+        // ============================================
+        // REKAMAN
+        // ============================================
+        async function toggleRecording() {
+            const btn = document.getElementById('recordBtn'), status = document.getElementById('recordingStatus');
+            if (!isRecording) {
+                const title = document.getElementById('recordingTitle').value.trim();
+                if (!title) { showToast('Masukkan judul', 'error'); return; }
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+                    audioChunks = [];
+                    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                    mediaRecorder.onstop = async () => {
+                        stream.getTracks().forEach(t => t.stop());
+                        const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                        await saveRecording(blob, title);
+                    };
+                    mediaRecorder.start();
+                    isRecording = true;
+                    btn.classList.add('recording');
+                    btn.innerHTML = '<i class="fas fa-stop"></i>';
+                    status.textContent = 'Merekam...';
+                    startTimer();
+                } catch (err) { showToast('Tidak dapat mengakses mikrofon', 'error'); }
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+                btn.classList.remove('recording');
+                btn.innerHTML = '<i class="fas fa-microphone"></i>';
+                status.textContent = 'Tekan untuk mulai merekam';
+                stopTimer();
+            }
+        }
+
+        function startTimer() {
+            recordingSeconds = 0;
+            recordingTimer = setInterval(() => {
+                recordingSeconds++;
+                const m = Math.floor(recordingSeconds / 60).toString().padStart(2, '0');
+                const s = (recordingSeconds % 60).toString().padStart(2, '0');
+                document.getElementById('recordingTime').textContent = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(recordingTimer);
+            document.getElementById('recordingTime').textContent = '';
+        }
+
+        async function saveRecording(blob, title) {
+            document.getElementById('uploadProgress').classList.add('show');
+            try {
+                const reader = new FileReader();
+                const base64 = await new Promise((res, rej) => {
+                    reader.onload = () => res(reader.result);
+                    reader.onerror = rej;
+                    reader.readAsDataURL(blob);
+                });
+                await callAppsScript({
+                    action: 'simpanRekaman',
+                    id: Date.now().toString(),
+                    tanggal: new Date().toLocaleDateString('id-ID'),
+                    waktu: new Date().toLocaleTimeString('id-ID'),
+                    judul: title,
+                    audioData: base64
+                });
+                showToast('Rekaman disimpan!', 'success');
+                document.getElementById('recordingTitle').value = '';
+                loadRekaman();
+            } catch (err) { showToast('Gagal menyimpan', 'error'); }
+            document.getElementById('uploadProgress').classList.remove('show');
+        }
+
+        async function loadRekaman() {
+            const btn = document.getElementById('btnRefreshRekaman');
+            btn.classList.add('spinning');
+            try {
+                const r = await callAppsScript({ action: 'getRekaman' });
+                rekamanData = r.data || [];
+                renderRekaman();
+            } catch (err) {
+                document.getElementById('recordingsList').innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat</p></div>';
+            }
+            btn.classList.remove('spinning');
+        }
+
+        function renderRekaman() {
+            const c = document.getElementById('recordingsList');
+            if (!rekamanData.length) {
+                c.innerHTML = '<div class="empty-state"><i class="fas fa-microphone-slash"></i><p>Belum ada rekaman</p></div>';
+                return;
+            }
+            c.innerHTML = rekamanData.map(r => `
+                <div class="recording-item">
+                    <div class="recording-item-header">
+                        <div><h4><i class="fas fa-music"></i> ${r.judul}</h4><p>${r.tanggal} ${r.waktu}</p></div>
+                        <button class="delete-item-btn teacher-only" onclick="hapusRekaman(${r.row})"><i class="fas fa-trash"></i></button>
+                    </div>
+                    <audio controls src="${r.audioData}" preload="none"></audio>
+                </div>
+            `).join('');
+        }
+
+        async function hapusRekaman(row) {
+            if (!confirm('Hapus rekaman ini?')) return;
+            showLoading(true, 'Menghapus...');
+            try {
+                await callAppsScript({ action: 'hapusRekaman', row });
+                showToast('Dihapus', 'success');
+                loadRekaman();
+            } catch (err) { showToast('Gagal', 'error'); }
+            showLoading(false);
+        }
+
+        // ============================================
+        // RIWAYAT
+        // ============================================
+        async function loadRiwayat() {
+            const btn = document.getElementById('btnRefresh');
+            btn.classList.add('spinning');
+            document.getElementById('riwayatList').innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Memuat...</p></div>';
+            try {
+                const r = await callAppsScript({ action: 'getData' });
+                riwayatData = r.data || [];
+                renderRiwayat();
+                updateStatistik();
+                document.getElementById('lastUpdate').innerHTML = '<i class="fas fa-clock"></i> ' + new Date().toLocaleString('id-ID');
+            } catch (err) {
+                document.getElementById('riwayatList').innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat</p></div>';
+            }
+            btn.classList.remove('spinning');
+        }
+
+        function renderRiwayat() {
+            const c = document.getElementById('riwayatList');
+            if (!riwayatData.length) {
+                c.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Belum ada setoran</p></div>';
+                return;
+            }
+            c.innerHTML = riwayatData.map(i => `
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <div>
+                            <h4>${i.siswa}</h4>
+                            <p>QS. ${i.surat}: ${i.ayatDari}-${i.ayatSampai}</p>
+                            <p style="font-size:0.7rem;">${i.tanggal} ${i.waktu}</p>
+                        </div>
+                        <div class="history-actions-item">
+                            <span class="predikat-badge badge-${i.predikat.toLowerCase()}">${i.predikat}</span>
+                            <button class="delete-item-btn teacher-only" onclick="hapusItem(${i.row})"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function hapusItem(row) {
+            if (!confirm('Hapus?')) return;
+            showLoading(true, 'Menghapus...');
+            try {
+                await callAppsScript({ action: 'hapus', row });
+                showToast('Dihapus', 'success');
+                loadRiwayat();
+            } catch (err) { showToast('Gagal', 'error'); }
+            showLoading(false);
+        }
+
+        async function hapusSemuaData() {
+            if (!confirm('Hapus SEMUA?')) return;
+            if (!confirm('Yakin?')) return;
+            showLoading(true, 'Menghapus...');
+            try {
+                await callAppsScript({ action: 'hapusSemua' });
+                showToast('Semua dihapus', 'success');
+                riwayatData = [];
+                renderRiwayat();
+                updateStatistik();
+            } catch (err) { showToast('Gagal', 'error'); }
+            showLoading(false);
+        }
+
+        // ============================================
+        // STATISTIK
+        // ============================================
+        function updateStatistik() {
+            const d = riwayatData || [];
+            document.getElementById('totalSetoran').textContent = d.length;
+            document.getElementById('statIstimewa').textContent = d.filter(x => x.predikat === 'Istimewa').length;
+            document.getElementById('statBagus').textContent = d.filter(x => x.predikat === 'Bagus').length;
+            document.getElementById('statCukup').textContent = d.filter(x => x.predikat === 'Cukup').length;
+            document.getElementById('statMengulang').textContent = d.filter(x => x.predikat === 'Mengulang').length;
+
+            const st = {};
+            currentConfig.siswa.forEach(s => st[s] = { ayat: 0 });
+            d.forEach(x => { if (st[x.siswa]) st[x.siswa].ayat += parseInt(x.jumlahAyat) || 0; });
+
+            const tot = currentConfig.surat.reduce((a, b) => a + b.ayat, 0);
+            const col = ['#FF6B35', '#4CAF50', '#2196F3', '#9C27B0', '#FF9800', '#00BCD4', '#E91E63'];
+
+            document.getElementById('progressList').innerHTML = currentConfig.siswa.map((s, i) => {
+                const ay = st[s].ayat, pc = Math.min(100, Math.round((ay / tot) * 100));
+                return `<div class="progress-item"><div class="progress-label"><span>${s}</span><span>${ay} (${pc}%)</span></div><div class="progress-bar"><div class="progress-fill" style="width:${pc}%;background:${col[i % col.length]}"></div></div></div>`;
+            }).join('');
+        }
+
+        // ============================================
+        // API
+        // ============================================
+        function callAppsScript(params) {
+            return new Promise((resolve, reject) => {
+                const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                const script = document.createElement('script');
+                const timeout = setTimeout(() => { cleanup(); reject(new Error('Timeout')); }, 30000);
+
+                window[cb] = function(r) {
+                    cleanup();
+                    r.success ? resolve(r) : reject(new Error(r.error || 'Error'));
+                };
+
+                function cleanup() {
+                    clearTimeout(timeout);
+                    delete window[cb];
+                    if (script.parentNode) script.parentNode.removeChild(script);
+                }
+
+                const u = new URLSearchParams();
+                u.append('callback', cb);
+                Object.keys(params).forEach(k => u.append(k, params[k]));
+
+                script.src = currentConfig.url + '?' + u.toString();
+                script.onerror = () => { cleanup(); reject(new Error('Network')); };
+                document.body.appendChild(script);
+            });
+        }
+
+        // ============================================
+        // UTILS
+        // ============================================
+        function showToast(m, t = '') {
+            const e = document.getElementById('toast');
+            e.textContent = m;
+            e.className = 'toast ' + t + ' show';
+            setTimeout(() => e.classList.remove('show'), 3000);
+        }
+
+        function showLoading(s, t = 'Memuat...') {
+            document.getElementById('loading').classList.toggle('show', s);
+            document.getElementById('loadingText').textContent = t;
+        }
+    </script>
+</body>
+</html>
