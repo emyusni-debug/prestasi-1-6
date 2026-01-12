@@ -159,7 +159,26 @@
         .last-update{font-size:0.75rem;color:var(--text-light);text-align:center;margin-top:15px;padding:10px;background:var(--bg-light);border-radius:8px}
         .upload-progress{margin-top:15px;padding:10px;background:var(--bg-light);border-radius:8px;text-align:center;display:none}
         .upload-progress.show{display:block}
-    </style>
+		/* Murottal Styles */
+.filter-btn{padding:8px 16px;border:2px solid var(--accent);background:var(--white);border-radius:20px;font-size:0.8rem;cursor:pointer;transition:all 0.3s}
+.filter-btn:hover{border-color:var(--primary);background:var(--bg-light)}
+.filter-btn.active{background:var(--primary);color:var(--white);border-color:var(--primary)}
+.surat-list{max-height:400px;overflow-y:auto}
+.surat-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;margin-bottom:8px;background:var(--bg-light);cursor:pointer;transition:all 0.3s;border:2px solid transparent}
+.surat-item:hover{border-color:var(--primary);background:var(--white)}
+.surat-item.playing{border-color:var(--primary);background:linear-gradient(135deg,var(--accent) 0%,var(--bg-light) 100%)}
+.surat-item.playing .surat-number{background:var(--primary);color:var(--white)}
+.surat-number{width:40px;height:40px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;color:var(--primary);font-size:0.9rem;flex-shrink:0}
+.surat-info{flex:1}
+.surat-info h4{font-size:0.95rem;color:var(--text-dark);margin-bottom:2px}
+.surat-info p{font-size:0.75rem;color:var(--text-light)}
+.surat-play-btn{width:36px;height:36px;border-radius:50%;border:none;background:var(--primary);color:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
+.surat-play-btn:hover{transform:scale(1.1);box-shadow:0 3px 10px rgba(0,0,0,0.2)}
+.kelas-tag{font-size:0.65rem;padding:2px 6px;border-radius:8px;margin-left:5px}
+.kelas-tag.k4{background:#FFE4D6;color:#E55A2B}
+.kelas-tag.k5{background:#D6F5E0;color:#15803D}
+.kelas-tag.k6{background:#FEE2E2;color:#B91C1C}
+	</style>
 </head>
 <body>
     <!-- Login Page -->
@@ -222,11 +241,12 @@
         </div>
 
         <div class="tabs">
-            <div class="tab active" onclick="switchTab('setoran')"><i class="fas fa-book-quran"></i>Setor</div>
-            <div class="tab" onclick="switchTab('bimbingan')"><i class="fas fa-microphone"></i>Rekaman</div>
-            <div class="tab" onclick="switchTab('riwayat')"><i class="fas fa-history"></i>Riwayat</div>
-            <div class="tab" onclick="switchTab('statistik')"><i class="fas fa-chart-bar"></i>Statistik</div>
-        </div>
+    <div class="tab active" onclick="switchTab('setoran')"><i class="fas fa-book-quran"></i>Setor</div>
+    <div class="tab" onclick="switchTab('murottal')"><i class="fas fa-headphones"></i>Murottal</div>
+    <div class="tab" onclick="switchTab('bimbingan')"><i class="fas fa-microphone"></i>Rekaman</div>
+    <div class="tab" onclick="switchTab('riwayat')"><i class="fas fa-history"></i>Riwayat</div>
+    <div class="tab" onclick="switchTab('statistik')"><i class="fas fa-chart-bar"></i>Statistik</div>
+</div>
 
         <div class="tab-content active" id="setoranTab">
             <div class="target-info">
@@ -235,6 +255,7 @@
                     <div class="semester-item"><strong>Semester 1</strong><span id="targetSmt1">-</span></div>
                     <div class="semester-item"><strong>Semester 2</strong><span id="targetSmt2">-</span></div>
                 </div>
+				
             </div>
             <div class="card teacher-only">
                 <div class="card-title"><i class="fas fa-edit"></i> Form Setoran</div>
@@ -259,7 +280,44 @@
             </div>
             <div class="info-card"><h4><i class="fas fa-info-circle"></i> Informasi</h4><p><strong>Kepala Madrasah:</strong> M. Arifin, S.Pd.I, M.Pd</p><p><strong>Guru Tahfidh:</strong> M. Yusni</p></div>
         </div>
+			<!-- Tab Content: Murottal -->
+<div class="tab-content" id="murottalTab">
+    <div class="card">
+        <div class="card-title"><i class="fas fa-headphones"></i> Murottal Juz 'Amma</div>
+        <p style="font-size:0.8rem;color:var(--text-light);margin-bottom:15px;">
+            <i class="fas fa-user"></i> Qari: Mishary Rashid Alafasy (Murottal Anak)
+        </p>
+        
+        <!-- Audio Player Utama -->
+        <div class="main-player" id="mainPlayer" style="display:none;">
+            <div style="background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);color:white;padding:15px;border-radius:12px;margin-bottom:15px;">
+                <p style="font-size:0.8rem;opacity:0.9;">Sedang Diputar:</p>
+                <h3 id="nowPlayingTitle" style="font-size:1.1rem;margin:5px 0;">-</h3>
+                <audio id="audioPlayer" controls style="width:100%;margin-top:10px;border-radius:8px;"></audio>
+            </div>
+        </div>
 
+        <!-- Filter Kelas -->
+        <div style="margin-bottom:15px;">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="filter-btn active" onclick="filterSurat('semua')">Semua</button>
+                <button class="filter-btn" onclick="filterSurat('kelas4')">Kelas 4</button>
+                <button class="filter-btn" onclick="filterSurat('kelas5')">Kelas 5</button>
+                <button class="filter-btn" onclick="filterSurat('kelas6')">Kelas 6</button>
+            </div>
+        </div>
+
+        <!-- Daftar Surat -->
+        <div class="surat-list" id="suratList"></div>
+    </div>
+    
+    <div class="info-card">
+        <h4><i class="fas fa-info-circle"></i> Tips Muroja'ah</h4>
+        <p>• Dengarkan murottal sambil melihat mushaf</p>
+        <p>• Ulangi ayat yang sulit hingga hafal</p>
+        <p>• Muroja'ah minimal 1x sehari</p>
+    </div>
+</div>
         <div class="tab-content" id="bimbinganTab">
             <div class="card teacher-only">
                 <div class="card-title"><i class="fas fa-microphone-alt"></i> Rekam Bimbingan</div>
@@ -474,7 +532,173 @@
         let recordingSeconds = 0;
         let riwayatData = [];
         let rekamanData = [];
+		// ============================================
+// DATA MUROTTAL JUZ 'AMMA
+// ============================================
+const MUROTTAL_DATA = [
+    // Kelas 6 - Surat Panjang
+    { nomor: 36, nama: "Yasin", ayat: 83, kelas: "kelas6", latin: "Yaa Siin" },
+    { nomor: 56, nama: "Al-Waqi'ah", ayat: 96, kelas: "kelas6", latin: "Al-Waaqi'ah" },
+    { nomor: 67, nama: "Al-Mulk", ayat: 30, kelas: "kelas6", latin: "Al-Mulk" },
+    
+    // Kelas 5 - Juz 'Amma Awal
+    { nomor: 78, nama: "An-Naba'", ayat: 40, kelas: "kelas5", latin: "An-Naba'" },
+    { nomor: 79, nama: "An-Nazi'at", ayat: 46, kelas: "kelas5", latin: "An-Naazi'aat" },
+    { nomor: 80, nama: "'Abasa", ayat: 42, kelas: "kelas5", latin: "'Abasa" },
+    { nomor: 81, nama: "At-Takwir", ayat: 29, kelas: "kelas5", latin: "At-Takwiir" },
+    { nomor: 82, nama: "Al-Infithar", ayat: 19, kelas: "kelas5", latin: "Al-Infitaar" },
+    { nomor: 83, nama: "Al-Muthaffifin", ayat: 36, kelas: "kelas5", latin: "Al-Mutaffifiin" },
+    { nomor: 84, nama: "Al-Insyiqaq", ayat: 25, kelas: "kelas5", latin: "Al-Inshiqaaq" },
+    { nomor: 85, nama: "Al-Buruj", ayat: 22, kelas: "kelas5", latin: "Al-Buruuj" },
+    { nomor: 86, nama: "At-Thariq", ayat: 17, kelas: "kelas5,kelas4", latin: "At-Taariq" },
+    
+    // Kelas 4
+    { nomor: 87, nama: "Al-A'la", ayat: 19, kelas: "kelas4", latin: "Al-A'laa" },
+    { nomor: 88, nama: "Al-Ghasyiyah", ayat: 26, kelas: "kelas4", latin: "Al-Ghaashiyah" },
+    { nomor: 89, nama: "Al-Fajr", ayat: 30, kelas: "kelas4", latin: "Al-Fajr" },
+    { nomor: 90, nama: "Al-Balad", ayat: 20, kelas: "kelas4", latin: "Al-Balad" },
+    { nomor: 91, nama: "Asy-Syams", ayat: 15, kelas: "kelas4", latin: "Ash-Shams" },
+    { nomor: 92, nama: "Al-Lail", ayat: 21, kelas: "kelas4", latin: "Al-Layl" },
+    
+    // Surat Pendek Tambahan (Juz 'Amma)
+    { nomor: 93, nama: "Ad-Dhuha", ayat: 11, kelas: "tambahan", latin: "Ad-Dhuhaa" },
+    { nomor: 94, nama: "Al-Insyirah", ayat: 8, kelas: "tambahan", latin: "Ash-Sharh" },
+    { nomor: 95, nama: "At-Tin", ayat: 8, kelas: "tambahan", latin: "At-Tiin" },
+    { nomor: 96, nama: "Al-'Alaq", ayat: 19, kelas: "tambahan", latin: "Al-'Alaq" },
+    { nomor: 97, nama: "Al-Qadr", ayat: 5, kelas: "tambahan", latin: "Al-Qadr" },
+    { nomor: 98, nama: "Al-Bayyinah", ayat: 8, kelas: "tambahan", latin: "Al-Bayyinah" },
+    { nomor: 99, nama: "Az-Zalzalah", ayat: 8, kelas: "tambahan", latin: "Az-Zalzalah" },
+    { nomor: 100, nama: "Al-'Adiyat", ayat: 11, kelas: "tambahan", latin: "Al-'Aadiyaat" },
+    { nomor: 101, nama: "Al-Qari'ah", ayat: 11, kelas: "tambahan", latin: "Al-Qaari'ah" },
+    { nomor: 102, nama: "At-Takatsur", ayat: 8, kelas: "tambahan", latin: "At-Takaathur" },
+    { nomor: 103, nama: "Al-'Asr", ayat: 3, kelas: "tambahan", latin: "Al-'Asr" },
+    { nomor: 104, nama: "Al-Humazah", ayat: 9, kelas: "tambahan", latin: "Al-Humazah" },
+    { nomor: 105, nama: "Al-Fil", ayat: 5, kelas: "tambahan", latin: "Al-Fiil" },
+    { nomor: 106, nama: "Quraisy", ayat: 4, kelas: "tambahan", latin: "Quraysh" },
+    { nomor: 107, nama: "Al-Ma'un", ayat: 7, kelas: "tambahan", latin: "Al-Maa'uun" },
+    { nomor: 108, nama: "Al-Kautsar", ayat: 3, kelas: "tambahan", latin: "Al-Kawthar" },
+    { nomor: 109, nama: "Al-Kafirun", ayat: 6, kelas: "tambahan", latin: "Al-Kaafiruun" },
+    { nomor: 110, nama: "An-Nashr", ayat: 3, kelas: "tambahan", latin: "An-Nasr" },
+    { nomor: 111, nama: "Al-Lahab", ayat: 5, kelas: "tambahan", latin: "Al-Masad" },
+    { nomor: 112, nama: "Al-Ikhlas", ayat: 4, kelas: "tambahan", latin: "Al-Ikhlaas" },
+    { nomor: 113, nama: "Al-Falaq", ayat: 5, kelas: "tambahan", latin: "Al-Falaq" },
+    { nomor: 114, nama: "An-Nas", ayat: 6, kelas: "tambahan", latin: "An-Naas" }
+];
 
+let currentlyPlaying = null;
+let currentFilter = 'semua';
+
+// ============================================
+// MUROTTAL FUNCTIONS
+// ============================================
+function getMurottalUrl(nomorSurat) {
+    // Menggunakan server MP3 Quran yang reliable
+    const paddedNumber = String(nomorSurat).padStart(3, '0');
+    return `https://server8.mp3quran.net/afs/${paddedNumber}.mp3`;
+}
+
+function renderMurottalList() {
+    const container = document.getElementById('suratList');
+    if (!container) return;
+    
+    let filteredData = MUROTTAL_DATA;
+    
+    if (currentFilter !== 'semua') {
+        filteredData = MUROTTAL_DATA.filter(s => s.kelas.includes(currentFilter));
+    }
+    
+    container.innerHTML = filteredData.map(surat => {
+        const isPlaying = currentlyPlaying === surat.nomor;
+        let kelasTag = '';
+        
+        if (surat.kelas.includes('kelas4')) kelasTag += '<span class="kelas-tag k4">Kelas 4</span>';
+        if (surat.kelas.includes('kelas5')) kelasTag += '<span class="kelas-tag k5">Kelas 5</span>';
+        if (surat.kelas.includes('kelas6')) kelasTag += '<span class="kelas-tag k6">Kelas 6</span>';
+        
+        return `
+            <div class="surat-item ${isPlaying ? 'playing' : ''}" onclick="playSurat(${surat.nomor}, '${surat.nama}')">
+                <div class="surat-number">${surat.nomor}</div>
+                <div class="surat-info">
+                    <h4>${surat.nama} ${kelasTag}</h4>
+                    <p>${surat.ayat} ayat</p>
+                </div>
+                <button class="surat-play-btn">
+                    <i class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i>
+                </button>
+            </div>
+        `;
+    }).join('');
+}
+
+function filterSurat(filter) {
+    currentFilter = filter;
+    
+    // Update button active state
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.textContent.toLowerCase().includes(filter === 'semua' ? 'semua' : filter.replace('kelas', 'kelas '))) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Re-render list
+    renderMurottalList();
+}
+
+function playSurat(nomor, nama) {
+    const audio = document.getElementById('audioPlayer');
+    const mainPlayer = document.getElementById('mainPlayer');
+    const nowPlaying = document.getElementById('nowPlayingTitle');
+    
+    if (currentlyPlaying === nomor) {
+        // Toggle pause/play
+        if (audio.paused) {
+            audio.play();
+        } else {
+            audio.pause();
+        }
+        return;
+    }
+    
+    // Play new surat
+    currentlyPlaying = nomor;
+    const url = getMurottalUrl(nomor);
+    
+    mainPlayer.style.display = 'block';
+    nowPlaying.textContent = `${nomor}. ${nama}`;
+    audio.src = url;
+    audio.play().catch(e => {
+        showToast('Gagal memutar audio', 'error');
+        console.error(e);
+    });
+    
+    // Update list UI
+    renderMurottalList();
+    
+    // Scroll to player
+    mainPlayer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Audio event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const audio = document.getElementById('audioPlayer');
+    if (audio) {
+        audio.addEventListener('ended', () => {
+            // Auto play next surat
+            const currentIndex = MUROTTAL_DATA.findIndex(s => s.nomor === currentlyPlaying);
+            if (currentIndex < MUROTTAL_DATA.length - 1) {
+                const nextSurat = MUROTTAL_DATA[currentIndex + 1];
+                playSurat(nextSurat.nomor, nextSurat.nama);
+            } else {
+                currentlyPlaying = null;
+                renderMurottalList();
+            }
+        });
+        
+        audio.addEventListener('play', () => renderMurottalList());
+        audio.addEventListener('pause', () => renderMurottalList());
+    }
+});
         // ============================================
         // INIT
         // ============================================
@@ -642,14 +866,16 @@
         // TABS
         // ============================================
         function switchTab(t) {
-            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
-            event.target.closest('.tab').classList.add('active');
-            document.getElementById(t + 'Tab').classList.add('active');
-            if (t === 'riwayat') loadRiwayat();
-            if (t === 'statistik') updateStatistik();
-            if (t === 'bimbingan') loadRekaman();
-        }
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+    event.target.closest('.tab').classList.add('active');
+    document.getElementById(t + 'Tab').classList.add('active');
+    
+    if (t === 'riwayat') loadRiwayat();
+    if (t === 'statistik') updateStatistik();
+    if (t === 'bimbingan') loadRekaman();
+    if (t === 'murottal') renderMurottalList();
+}
 
         // ============================================
         // SETORAN
